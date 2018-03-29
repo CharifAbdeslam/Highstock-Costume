@@ -1,5 +1,5 @@
 
-# react-boilerplate-light
+# redux-boilerplate-light
 
  :boom: Start your next react project in one second with  [**Bootstrap v4**!](https://reactstrap.github.io/) and **Sass** :boom:
 

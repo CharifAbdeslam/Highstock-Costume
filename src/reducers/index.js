@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-const rootReducer = combineReducers({
-  
+const reducers = combineReducers({
+
 });
-export default rootReducer;
+export default reducers;

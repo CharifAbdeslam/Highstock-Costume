@@ -10,36 +10,57 @@ class App extends Component {
   }
 
   render() {
-
     const config= {
       rangeSelector: {
               buttons: [{
                   type: 'hour',
                   count: 1,
                   text: '1h'
-              }, {
-                  type: 'day',
-                  count: 1,
-                  text: '1D'
-              }, {
-                  type: 'all',
-                  count: 1,
-                  text: 'All'
               }],
               selected: 0,
               inputEnabled: false
           },
+          plotOptions: {
+ candlestick: {
+            color: 'red',
+            upColor: 'green'
+        }
+    },
+    yAxis: [{
+            labels: {
+                align: 'right',
+                x: -3
+            },
+            height: '80%',
+            lineWidth: 2,
+            resize: {
+                enabled: true
+            }
+        }, {
+            labels: {
+                align: 'right',
+                x: -3
+            },
+            top: '80%',
+            height: '20%',
+            offset: 0,
+            lineWidth: 2
+        }],
       title: {
         text: 'BTC/USD 1mn'
+      },
+      chart:{
+        height:500
       },
       series: [
         {
           title:'price',
           type: 'candlestick',
-          data: this.props.data.reverse(),
-        }
-      ]
-    }
+          id:'crypto',
+          data: this.props.data.reverse()
+        }]
+      }
+
     if(this.props.data == null){
       return(<div>Loading ...</div>)
     }

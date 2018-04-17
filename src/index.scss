@@ -6,6 +6,12 @@ body {
 .highcharts-credits{
   display: none !important;
 }
-.highcharts-input-group{
-  display: none !important;  
+.highcharts-input-group,.highcharts-range-selector-group{
+  display: none !important;
+}
+.highcharts-point-down{
+  stroke:red !important;
+}
+.highcharts-point-up{
+  stroke:green !important;
 }

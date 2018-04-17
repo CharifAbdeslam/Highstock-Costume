@@ -1,11 +1,8 @@
-const DATA_URL = "https://api.bitfinex.com/v2/candles/trade:1m:tBTCUSD/hist";
+const DATA_URL = "https://api.bitfinex.com/v2/candles/trade:1m:tBTCUSD/hist?limit=1000";
 export const GET_DATA ='GET_DATA';
 
-const arrange =array=>{
- return array.map(([x,open,close,high,low,volume]) =>{
-    return ({x,open,close,high,low,volume })
-  })
-
+const arrange = arr => {
+    return arr.map(([x,open,close,high,low,volume]) =>({x,open,close,high,low,volume}))     
 }
 
 export const getData = () => dispatch =>{

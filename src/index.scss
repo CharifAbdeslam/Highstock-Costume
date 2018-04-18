@@ -2,16 +2,18 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-}
-.highcharts-credits{
-  display: none !important;
-}
-.highcharts-input-group,.highcharts-range-selector-group{
-  display: none !important;
-}
-.highcharts-point-down{
-  stroke:red !important;
-}
-.highcharts-point-up{
-  stroke:green !important;
+  .highcharts-credits{
+    display: none !important;
+  }
+  .highcharts-input-group,.highcharts-range-selector-group{
+    display: none !important;
+  }
+  .highcharts-point-down{
+    stroke:red !important;
+    fill:red;
+  }
+  .highcharts-point-up{
+    stroke:green !important;
+    fill:green;
+  }
 }

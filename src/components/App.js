@@ -2,87 +2,96 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {getData} from '../actions/index';
 import {Container} from 'reactstrap';
-import ReactHighstock from 'react-highcharts/ReactHighstock';
+import Highcharts from 'highcharts/highstock';
+import StockChart from './Stock.jsx';
 require('highcharts/indicators/indicators')(Highcharts)
-require('highcharts/indicators/pivot-points')(Highcharts)
-require('highcharts/indicators/macd')(Highcharts)
-require('highcharts/modules/exporting')(Highcharts)
-require('highcharts/modules/map')(Highcharts)
+require('highcharts/indicators/ema')(Highcharts)
+
 class App extends Component {
+
   componentWillMount() {
     this.props.getData()
   }
-/*https://github.com/highcharts/highcharts-react/blob/master/package.json*/
   render() {
     const {data} = this.props;
-    var ohlc = [],
-      volume = [],
-      dataLen = data.length;
-    let i = 0;
-    for (i; i < dataLen; i += 1) {
-      ohlc.push([data[i][0], // the date
-        data[i][1], // open
-        data[i][3], // high
-        data[i][4], // low
-        data[i][2] // close
-      ]);
-      volume.push([data[i][0], // the date
-        data[i][5] // the volume
-      ]);
-    }
-    const config = {
-      rangeSelector: {
-        buttons: [
-          {
-            type: 'hour',
-            count: 1,
-            text: '1h'
-          }
-        ],
-        selected: 1,
-        inputEnabled: false
+    let volume = data.map(i => ([
+      i[0], i[5]
+    ]));
+    const stockOptions = {
+      chart: {
+        height: 600
       },
-      title: {
-        text: 'AAPL Historical'
+      xAxis: {
+        gridLineWidth: 1,
+        lineWidth: 2
       },
       yAxis: [
         {
+
           height: '80%',
-          lineWidth: 2,
-          resize: {
-            enabled: false
+          labels: {
+            align: 'left',
+            x: -3
           }
         }, {
-          top: '70%',
-          height: '20%',
-          offset: 0,
-          lineWidth: 2
+          top: '80%',
+          height: '10%',
+          labels: {
+            align: 'left',
+            x: -3
+          },
+          offset: 0
+        }, {
+          top: '90%',
+          height: '10%',
+          labels: {
+            align: 'left',
+            x: -3
+          },
+          offset: 0
         }
       ],
-
-      tooltip: {
-        split: true
-      },
-      chart:{
-             height:600
-     },
       series: [
+
         {
           type: 'candlestick',
-          name: 'AAPL',
-          data: ohlc,
-          id:'aapl'
+          data: data,
+          name: 'ETH/BTC',
+          id: 'aapl'
+        }, {
+          type: 'ema',
+          marker: {
+            enabled: false
+          },
+          linkedTo: 'aapl',
+          params: {
+            period: 50
+          }
+        }, {
+          type: 'ema',
+          linkedTo: 'aapl',
+          marker: {
+            enabled: false
+          }
         }, {
           type: 'column',
           name: 'Volume',
           data: volume,
           yAxis: 1
+        }, {
+          type: 'area',
+          name: 'Line',
+          data: volume,
+          yAxis: 2,
+          threshold: null,
+          tooltip: {
+            valueDecimals: 2
+          }
         }
       ]
-
     }
     return (<Container fluid={true}>
-      <ReactHighstock config={config}/>
+      <StockChart options={stockOptions} highcharts={Highcharts}/>
     </Container>);
   }
 }

@@ -18,9 +18,7 @@ constructor(props){
   componentWillMount() {
    const socket = socketIOClient('http://localhost:3001');
          socket.on("candle",function(data){
-           if(data !=='hb'){
                console.log(data)
-           }
          })
     this.props.getData()
   }

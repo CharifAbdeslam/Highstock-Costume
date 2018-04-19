@@ -4,12 +4,24 @@ import {getData} from '../actions/index';
 import {Container} from 'reactstrap';
 import Highcharts from 'highcharts/highstock';
 import StockChart from './Stock.jsx';
+import socketIOClient from 'socket.io-client'
 require('highcharts/indicators/indicators')(Highcharts)
 require('highcharts/indicators/ema')(Highcharts)
 
 class App extends Component {
-
+constructor(props){
+  super(props);
+  this.state={
+    data:[]
+  }
+}
   componentWillMount() {
+   const socket = socketIOClient('http://localhost:3001');
+         socket.on("candle",function(data){
+           if(data !=='hb'){
+               console.log(data)
+           }
+         })
     this.props.getData()
   }
   render() {

@@ -7,5 +7,6 @@ export const getData = () => dispatch =>{
                   .then(data => dispatch({
                     type:GET_DATA,
                     payload:parseData(data)
-                  }))
+                  }
+))
 }

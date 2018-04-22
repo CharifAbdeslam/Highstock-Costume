@@ -9,20 +9,27 @@ require('highcharts/indicators/indicators')(Highcharts)
 require('highcharts/indicators/ema')(Highcharts)
 
 class App extends Component {
+  constructor(props){
+    super(props);
+    this.state={
+      updated:[]
+    }
+  }
   componentWillMount() {
     this.props.getData();
-
-  }
-  render() {
     var checkTime=0;
     var updated=[]
    const socket = socketIOClient('http://localhost:3001');
          socket.on("candle",function(res){
-               if(checkTime < res[0] ){
+               if(checkTime < res[0]){
                  checkTime = res[0];
-                 updated.push({x:res[0],low:res[1],open:res[2],close:res[3],high:res[4],volume:res[5]})
+                 updated.push([res[0],res[1],res[3],res[4],res[2],res[5]])
                }
          })
+      setInterval(()=>this.setState({updated}),2000)
+  }
+  render() {
+
     var liveChart = this.props.data;
     let volume = liveChart.map(i => ([
       i[0], i[5]
@@ -31,15 +38,6 @@ class App extends Component {
       chart: {
         height: 600
       },
-      events: {
-           load: function () {
-
-               // set up the updating of the chart each second
-               var series = this.series[0];
-               setInterval(function () {
-               }, 1000);
-           }
-       },
       xAxis: {
         gridLineWidth: 1,
         lineWidth: 2
@@ -74,7 +72,7 @@ class App extends Component {
 
         {
           type: 'candlestick',
-          data: liveChart,
+          data:this.state.updated,
           name: 'ETH/BTC',
           id: 'aapl'
         }, {
@@ -110,8 +108,7 @@ class App extends Component {
       ]
     }
 
-      stockOptions.series["data"] = updated;
-      console.log(stockOptions.series["data"])
+
     return (<Container fluid={true}>
       <StockChart options={stockOptions} highcharts={Highcharts}/>
       <button>Click</button>

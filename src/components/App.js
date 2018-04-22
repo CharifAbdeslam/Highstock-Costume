@@ -9,28 +9,37 @@ require('highcharts/indicators/indicators')(Highcharts)
 require('highcharts/indicators/ema')(Highcharts)
 
 class App extends Component {
-constructor(props){
-  super(props);
-  this.state={
-    data:[]
-  }
-}
   componentWillMount() {
-   const socket = socketIOClient('http://localhost:3001');
-         socket.on("candle",function(data){
-               console.log(data)
-         })
-    this.props.getData()
+    this.props.getData();
+
   }
   render() {
-    const {data} = this.props;
-    let volume = data.map(i => ([
+    var checkTime=0;
+    var updated=[]
+   const socket = socketIOClient('http://localhost:3001');
+         socket.on("candle",function(res){
+               if(checkTime < res[0] ){
+                 checkTime = res[0];
+                 updated.push({x:res[0],low:res[1],open:res[2],close:res[3],high:res[4],volume:res[5]})
+               }
+         })
+    var liveChart = this.props.data;
+    let volume = liveChart.map(i => ([
       i[0], i[5]
     ]));
-    const stockOptions = {
+    var stockOptions = {
       chart: {
         height: 600
       },
+      events: {
+           load: function () {
+
+               // set up the updating of the chart each second
+               var series = this.series[0];
+               setInterval(function () {
+               }, 1000);
+           }
+       },
       xAxis: {
         gridLineWidth: 1,
         lineWidth: 2
@@ -65,7 +74,7 @@ constructor(props){
 
         {
           type: 'candlestick',
-          data: data,
+          data: liveChart,
           name: 'ETH/BTC',
           id: 'aapl'
         }, {
@@ -91,7 +100,7 @@ constructor(props){
         }, {
           type: 'area',
           name: 'Line',
-          data: volume,
+          data: liveChart,
           yAxis: 2,
           threshold: null,
           tooltip: {
@@ -100,8 +109,12 @@ constructor(props){
         }
       ]
     }
+
+      stockOptions.series["data"] = updated;
+      console.log(stockOptions.series["data"])
     return (<Container fluid={true}>
       <StockChart options={stockOptions} highcharts={Highcharts}/>
+      <button>Click</button>
     </Container>);
   }
 }

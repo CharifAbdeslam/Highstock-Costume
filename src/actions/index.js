@@ -20,11 +20,10 @@ export const getLive = () => dispatch => {
        socket.on("candle",(res)=>{
             if(checkTime <= res[0]){
                checkTime = res[0];
-               updated.push([res[0],res[1],res[3],res[4],res[2],res[5]])
+               dispatch({
+                 type:LIVE_DATA,
+                 payload:res
+               })
              }
-             dispatch({
-               type:LIVE_DATA,
-               payload:updated
-             })
-       })
+          })
 }

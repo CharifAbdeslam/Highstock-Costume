@@ -8,19 +8,21 @@ require('highcharts/indicators/indicators')(Highcharts);
 require('highcharts/indicators/ema')(Highcharts);
 
 class App extends Component {
+
   componentWillMount() {
     this.props.getData();
     this.props.getLive();
   }
 
   render() {
-    var liveChart = this.props.data;
+    const {data,live} = this.props
+    var updated=[]
+    updated.push([live[0],live[1],live[3],live[4],live[2],live[5]])
     var stockOptions = {
       chart: {
         height: 600
       }, events: {
             load: function () {
-              var series = this.series[0];
              setInterval(function () {
              }, 1000);
             }
@@ -38,16 +40,16 @@ class App extends Component {
             x: -3
           }
         }, {
-          top: '80%',
-          height: '10%',
+          top: '37%',
+          height: '45%',
           labels: {
             align: 'left',
             x: -3
           },
           offset: 0
         }, {
-          top: '90%',
-          height: '10%',
+          top: '75%',
+          height: '25%',
           labels: {
             align: 'left',
             x: -3
@@ -59,7 +61,7 @@ class App extends Component {
 
         {
           type: 'candlestick',
-          data: liveChart.concat(this.props.live),
+          data: data.concat(updated),
           name: 'ETH/BTC',
           id: 'aapl'
         }, {
@@ -81,7 +83,7 @@ class App extends Component {
           type: 'column',
           name: 'Volume',
           data: (()=>{
-              return liveChart.concat(this.props.live).map(i => ([
+              return data.concat(updated).map(i => ([
                  i[0], i[5]
                ]));
           })(),
@@ -89,7 +91,7 @@ class App extends Component {
         }, {
           type: 'area',
           name: 'Line',
-          data: liveChart.concat(this.props.live),
+          data: data.concat(updated),
           yAxis: 2,
           threshold: null,
           tooltip: {

@@ -20,24 +20,26 @@ class App extends Component {
     var checkTime=0;
     var updated=[]
    const socket = socketIOClient('http://localhost:3001');
-         socket.on("candle",function(res){
-               if(checkTime < res[0]){
+         socket.on("candle",(res)=>{
+              if(checkTime <= res[0]){
                  checkTime = res[0];
                  updated.push([res[0],res[1],res[3],res[4],res[2],res[5]])
                }
+               this.setState({updated})
          })
-      setInterval(()=>this.setState({updated}),2000)
   }
-  render() {
 
+  render() {
     var liveChart = this.props.data;
-    let volume = liveChart.map(i => ([
-      i[0], i[5]
-    ]));
     var stockOptions = {
       chart: {
         height: 600
-      },
+      }, events: {
+            load: function () {
+                setInterval(function () {
+                },1000);
+            }
+        },
       xAxis: {
         gridLineWidth: 1,
         lineWidth: 2
@@ -72,7 +74,7 @@ class App extends Component {
 
         {
           type: 'candlestick',
-          data:this.state.updated,
+          data: liveChart.concat(this.state.updated),
           name: 'ETH/BTC',
           id: 'aapl'
         }, {
@@ -93,12 +95,16 @@ class App extends Component {
         }, {
           type: 'column',
           name: 'Volume',
-          data: volume,
+          data: (()=>{
+              return liveChart.concat(this.state.updated).map(i => ([
+                 i[0], i[5]
+               ]));
+          })(),
           yAxis: 1
         }, {
           type: 'area',
           name: 'Line',
-          data: liveChart,
+          data: liveChart.concat(this.state.updated),
           yAxis: 2,
           threshold: null,
           tooltip: {
@@ -107,7 +113,6 @@ class App extends Component {
         }
       ]
     }
-
 
     return (<Container fluid={true}>
       <StockChart options={stockOptions} highcharts={Highcharts}/>

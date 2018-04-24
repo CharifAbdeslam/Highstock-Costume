@@ -6,12 +6,17 @@ import Highcharts from 'highcharts/highstock';
 import StockChart from './Stock.jsx';
 require('highcharts/indicators/indicators')(Highcharts);
 require('highcharts/indicators/ema')(Highcharts);
+require('highcharts/indicators/bollinger-bands')(Highcharts);
+require('highcharts/indicators/rsi')(Highcharts);
+require('highcharts/indicators/stochastic')(Highcharts);
+require('highcharts/indicators/wma')(Highcharts);
 
 class App extends Component {
 
   componentWillMount() {
-    this.props.getData();
-    this.props.getLive();
+    const {getData,getLive} = this.props
+    getData();
+    getLive();
   }
 
   render() {
@@ -22,9 +27,9 @@ class App extends Component {
       chart: {
         height: 600
       }, events: {
-            load: function () {
-             setInterval(function () {
-             }, 1000);
+            load:  () =>{
+              setInterval(function () {
+               }, 1000);
             }
         },
       xAxis: {
@@ -40,28 +45,37 @@ class App extends Component {
             x: -3
           }
         }, {
-          top: '37%',
-          height: '45%',
+          height: '80%',
+          gridLineWidth: 0,
+          lineWidth: 0,
+          offset: 0,
           labels: {
-            align: 'left',
-            x: -3
-          },
-          offset: 0
+       enabled: false
+   }
         }, {
-          top: '75%',
-          height: '25%',
+          top: '80%',
+          height: '20%',
           labels: {
-            align: 'left',
-            x: -3
-          },
-          offset: 0
+         enabled: false
+       },
+          offset: 0,
+
+        },
+        {
+          top: '98%',
+          height: '20%',
+          labels: {
+         enabled: false
+       },
+          offset: 0,
+
         }
       ],
       series: [
 
         {
           type: 'candlestick',
-          data: data.concat(updated),
+          data:data.concat(updated),
           name: 'ETH/BTC',
           id: 'aapl'
         }, {
@@ -79,7 +93,17 @@ class App extends Component {
           marker: {
             enabled: false
           }
-        }, {
+        },
+        {
+           type: 'wma',
+           linkedTo: 'aapl',
+           params: {
+               period: 50
+           },
+           marker: {
+             enabled: false
+           },
+       }, {
           type: 'column',
           name: 'Volume',
           data: (()=>{
@@ -90,19 +114,35 @@ class App extends Component {
           yAxis: 1
         }, {
           type: 'area',
-          name: 'Line',
           data: data.concat(updated),
           yAxis: 2,
           threshold: null,
           tooltip: {
             valueDecimals: 2
           }
+        },
+        {
+          type: 'bb',
+          linkedTo: 'aapl'
+          },
+          {
+           yAxis: 3,
+           type: 'rsi',
+           linkedTo: 'aapl',
+           marker: {
+             enabled: false
+           },
+       },
+       {
+        yAxis: 1,
+        type: 'stochastic',
+        linkedTo: 'aapl'
         }
       ]
     }
 
     return (<Container fluid={true}>
-      <StockChart options={stockOptions} highcharts={Highcharts}/>
+      <StockChart options={stockOptions} highcharts={Highcharts} ref="chart"/>
       <button>Click</button>
     </Container>);
   }
@@ -110,6 +150,6 @@ class App extends Component {
 
 const mapStateToProps = state => ({
   data: state.candle.all,
-  live: state.livedata.live
+  live: state.candle.live
 })
 export default connect(mapStateToProps, {getData,getLive})(App);

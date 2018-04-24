@@ -1,5 +1,4 @@
-import {GET_DATA} from '../actions/index';
-import {LIVE_DATA} from '../actions/index';
+import {GET_DATA,LIVE_DATA} from '../actions/index';
 const INITIAL_STATE = {all:[],live:[]}
 
 export default (state = INITIAL_STATE, action) => {

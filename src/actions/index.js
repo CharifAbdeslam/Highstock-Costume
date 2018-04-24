@@ -15,7 +15,6 @@ export const getData = () => dispatch =>{
 }
 export const getLive = () => dispatch => {
   var checkTime=0;
-  var updated=[]
  const socket = socketIOClient('http://localhost:3001');
        socket.on("candle",(res)=>{
             if(checkTime <= res[0]){

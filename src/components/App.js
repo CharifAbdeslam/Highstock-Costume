@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {getData,getLive} from '../actions/index';
+import {getData} from '../actions/index';
 import {Container} from 'reactstrap';
 import Highcharts from 'highcharts/highstock';
 import StockChart from './Stock.jsx';
@@ -12,70 +12,74 @@ require('highcharts/indicators/stochastic')(Highcharts);
 require('highcharts/indicators/wma')(Highcharts);
 
 class App extends Component {
-
-  componentWillMount() {
-    const {getData,getLive} = this.props
-    getData();
-    getLive();
+  componentDidMount() {
+    this.props.getData();
   }
 
   render() {
-    const {data,live} = this.props
-    var updated=[]
-    updated.push([live[0],live[1],live[3],live[4],live[2],live[5]])
+    const {data} = this.props
     var stockOptions = {
       chart: {
         height: 600
-      }, events: {
-            load:  () =>{
-              setInterval(function () {
-               }, 1000);
-            }
-        },
+      },
       xAxis: {
         gridLineWidth: 1,
         lineWidth: 2
       },
       yAxis: [
-        {
 
-          height: '80%',
+        {
+          lineWidth: 1,
+          height: '85%',
           labels: {
             align: 'left',
-            x: -3
-          }
+          },
+
         }, {
-          height: '80%',
+          lineWidth: 1,
+          height: '85%',
           gridLineWidth: 0,
-          lineWidth: 0,
           offset: 0,
           labels: {
-       enabled: false
-   }
+            enabled: false
+          }
+
         }, {
-          top: '80%',
-          height: '20%',
+          lineWidth: 1,
+          top: '85%',
+          height: '15%',
           labels: {
-         enabled: false
-       },
-          offset: 0,
-
-        },
-        {
-          top: '98%',
-          height: '20%',
+            enabled: false
+          },
+          offset: 0
+        }, {
+          lineWidth: 1,
+          top: '85%',
+          height: '15%',
           labels: {
-         enabled: false
-       },
-          offset: 0,
-
+            enabled: false
+          },
+          offset: 0
         }
       ],
+      tooltip: {
+        backgroundColor: 'white',
+        borderWidth: 0,
+        borderRadius: 0,
+        headerFormat: '{point.key}',
+        pointFormat: ' | <span style="color:{series.color}">{series.name}</span>{point.y} {point.z}',
+        positioner: function () {
+            return { x: 10, y: 35 };
+        },
+        shadow: false,
+        split: false,
+        crosshairs: [true,true],
+    },
       series: [
 
         {
           type: 'candlestick',
-          data:data.concat(updated),
+          data: data,
           name: 'ETH/BTC',
           id: 'aapl'
         }, {
@@ -85,7 +89,7 @@ class App extends Component {
           },
           linkedTo: 'aapl',
           params: {
-            period: 50
+            period: 10
           }
         }, {
           type: 'ema',
@@ -93,63 +97,64 @@ class App extends Component {
           marker: {
             enabled: false
           }
-        },
-        {
-           type: 'wma',
-           linkedTo: 'aapl',
-           params: {
-               period: 50
-           },
-           marker: {
-             enabled: false
-           },
-       }, {
+        }, {
+          type: 'wma',
+          linkedTo: 'aapl',
+          params: {
+            period: 10
+          },
+          marker: {
+            enabled: false
+          }
+        }, {
+          color:'#CCCCCC',
           type: 'column',
           name: 'Volume',
-          data: (()=>{
-              return data.concat(updated).map(i => ([
-                 i[0], i[5]
-               ]));
+          zIndex: -1,
+          data: (() => {
+            return data.map(i => ([
+              i[0], i[5]
+            ]));
           })(),
           yAxis: 1
         }, {
           type: 'area',
-          data: data.concat(updated),
+          data: data,
           yAxis: 2,
           threshold: null,
           tooltip: {
             valueDecimals: 2
           }
-        },
-        {
+        }, {
           type: 'bb',
           linkedTo: 'aapl'
+        }, {
+          yAxis: 3,
+          type: 'rsi',
+          linkedTo: 'aapl',
+          marker: {
+            enabled: false
+          }
+        }, {
+          yAxis: 1,
+          type: 'stochastic',
+          linkedTo: 'aapl',
+          params: {
+            period: 10
           },
-          {
-           yAxis: 3,
-           type: 'rsi',
-           linkedTo: 'aapl',
-           marker: {
-             enabled: false
-           },
-       },
-       {
-        yAxis: 1,
-        type: 'stochastic',
-        linkedTo: 'aapl'
         }
       ]
-    }
 
+    }
+if (!data) {
+  return(<div>Loading</div>)
+}
     return (<Container fluid={true}>
-      <StockChart options={stockOptions} highcharts={Highcharts} ref="chart"/>
+      <StockChart options={stockOptions} highcharts={Highcharts}/>
       <button>Click</button>
     </Container>);
   }
 }
 
-const mapStateToProps = state => ({
-  data: state.candle.all,
-  live: state.candle.live
-})
-export default connect(mapStateToProps, {getData,getLive})(App);
+const mapStateToProps = state => ({data: state.candle.all})
+export default connect(mapStateToProps, {getData})(App);

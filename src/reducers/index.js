@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import dataCandles from './api';
+import liveChart from './api';
 const reducers = combineReducers({
-candle:dataCandles
+candle:liveChart,
 });
 export default reducers;

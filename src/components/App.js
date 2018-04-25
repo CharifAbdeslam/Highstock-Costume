@@ -19,6 +19,9 @@ class App extends Component {
   render() {
     const {data} = this.props
     var stockOptions = {
+      rangeSelector : {
+               selected : 0
+             },
       chart: {
         height: 600
       },
@@ -67,12 +70,13 @@ class App extends Component {
         borderWidth: 0,
         borderRadius: 0,
         headerFormat: '{point.key}',
-        pointFormat: ' | <span style="color:{series.color}">{series.name}</span>{point.y} {point.z}',
+        pointFormat: ' | <span style="color:{series.color}">{series.name}: </span>{point.y} {point.z}',
         positioner: function () {
             return { x: 10, y: 35 };
         },
         shadow: false,
         split: false,
+        shared:true,
         crosshairs: [true,true],
     },
       series: [
@@ -120,6 +124,7 @@ class App extends Component {
         }, {
           type: 'area',
           data: data,
+          name:'Area',
           yAxis: 2,
           threshold: null,
           tooltip: {

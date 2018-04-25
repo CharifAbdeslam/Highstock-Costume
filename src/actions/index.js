@@ -1,6 +1,6 @@
 import socketIOClient from 'socket.io-client'
 
-const DATA_URL = "https://api.bitfinex.com/v2/candles/trade:1m:tBTCUSD/hist?limit=50";
+const DATA_URL = "https://api.bitfinex.com/v2/candles/trade:1m:tBTCUSD/hist?limit=100";
 export const GET_DATA = 'GET_DATA';
 const parseData = arr => arr.reverse().map((i) => ([
   i[0],
@@ -16,11 +16,10 @@ export const getData = () => dispatch => {
     var newData = parseData(data)
     newData.pop();
     var checkTime = 0;
-    var live = []
+    var live = [];
     socket.on("candle", (res) => {
       if (checkTime <= res[0]) {
         checkTime = res[0];
-
         live.push([
           res[0],
           res[1],
